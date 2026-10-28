@@ -1,0 +1,5 @@
+1. 我想评测landingpage页面的排版维度。我应该怎么设计整个评测体系？参考脚手架先给我出一个版本
+2. 基于@landingpage-排版评测标准-v0.1.md 帮我实现1个评测skill。
+skill的输入是：一个html格式的landingpage页面。
+输出是：阅读层级角度的检测结果、评测分值，评测标准依据，以及改进结论
+3. @landingpage-reading-hierarchy 使用这个skill，帮我评测一下这个@Lin Qiao — Field Botanist & Seed-Bank Curator.html 页面

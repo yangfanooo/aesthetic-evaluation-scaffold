@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<!--
+  Style Metadata
+  style_name: 植物标本馆档案风、复古自然志编辑风、手工纸本拼贴风、野外研究笔记风
+  style_user_impression: The page feels like an opened botanical field manual: aged paper texture, taped photographs, pressed leaves, handwritten labels, accession cards, stamps, and quiet archival order. It is gentle, academic, tactile, and grounded in soil, mist, seed preservation, and ecological repair.
+  style_animation_vibe: Like turning pages in a herbarium folio: paper pieces softly rise, photographs slide into view, cards reveal one by one on scroll, and hover states feel like inspecting a specimen through a magnifying glass.
+  palette_hex: parchment #EEE7D6; deep moss #263323; olive #566347; ink #2E3026; paper #F7F0DF; dried flower #9B7A55; linework #C8BFA8; tape #D4BE8D
+  ui_framework: Tailwind CSS CDN + Vanilla JS + Inlined SVG
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lin Qiao — Field Botanist & Seed-Bank Curator</title>
+  <meta name="description" content="Portfolio and CV homepage for Lin Qiao, field botanist and seed-bank curator." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind = {
+      config: {
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+              sans: ['Inter', 'Helvetica Neue', 'system-ui', 'sans-serif'],
+              mono: ['IBM Plex Mono', 'SFMono-Regular', 'Consolas', 'monospace'],
+              hand: ['Caveat', 'cursive']
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --parchment: #EEE7D6;
+      --moss: #263323;
+      --olive: #566347;
+      --ink: #2E3026;
+      --paper: #F7F0DF;
+      --brown: #9B7A55;
+      --line: #C8BFA8;
+      --tape: #D4BE8D;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Inter", "Helvetica Neue", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(155, 122, 85, 0.08) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 70% 35%, rgba(38, 51, 35, 0.06) 0 1px, transparent 1.5px),
+        linear-gradient(90deg, rgba(200, 191, 168, 0.16) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(200, 191, 168, 0.11) 1px, transparent 1px),
+        var(--parchment);
+      background-size: 22px 22px, 31px 31px, 72px 72px, 72px 72px, auto;
+    }
+
+    .paper-grain {
+      position: relative;
+      isolation: isolate;
+    }
+
+    .paper-grain::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.48;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(46,48,38,.08) 0 1px, transparent 1px),
+        radial-gradient(circle at 80% 60%, rgba(155,122,85,.10) 0 1px, transparent 1px),
+        linear-gradient(115deg, rgba(255,255,255,.22), rgba(255,255,255,0) 42%, rgba(38,51,35,.04));
+      background-size: 18px 18px, 26px 26px, auto;
+      mix-blend-mode: multiply;
+    }
+
+    .nav-link {
+      opacity: .72;
+      transition: opacity .25s ease, color .25s ease, border-color .25s ease;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 3px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      opacity: 1;
+      color: var(--paper);
+      border-color: var(--paper);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px) rotate(var(--r, 0deg));
+      transition: opacity .75s ease, transform .75s ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0) rotate(var(--r, 0deg));
+    }
+
+    .skill-bar {
+      width: 0%;
+      transition: width 1000ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .link-line {
+      position: relative;
+    }
+
+    .link-line::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 100%;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .35s ease;
+    }
+
+    .link-line:hover::after {
+      transform: scaleX(1);
+    }
+
+    @keyframes stampIn {
+      0% { opacity: 0; transform: scale(1.18) rotate(-12deg); filter: blur(2px); }
+      100% { opacity: 1; transform: scale(1) rotate(-12deg); filter: blur(0); }
+    }
+
+    .stamp-in {
+      animation: stampIn .65s ease-out .8s both;
+    }
+
+    @media (max-width: 767px) {
+      .reveal,
+      .reveal.is-visible {
+        transform: translateY(0) rotate(0deg);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-[#EEE7D6] text-[#2E3026] antialiased">
+  <header class="sticky top-0 z-50 bg-[#263323] text-[#F7F0DF] border-b border-[#F7F0DF]/10">
+    <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-4 md:px-8">
+      <a href="#home" class="flex items-center gap-3 group" aria-label="Lin Qiao home">
+        <svg class="w-5 h-5 text-[#D4BE8D] transition-transform duration-500 group-hover:rotate-[-8deg]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 21C11.5 15.5 10.2 11.7 7.4 8.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M12.2 13.2C16.9 13.1 20.1 10.4 21 5.2C16.3 5 12.8 7.4 12.2 13.2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M10.2 10.3C6.1 10.1 3.2 7.8 2.5 3.2C6.5 3.1 9.5 5.2 10.2 10.3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        <span class="font-serif tracking-[0.25em] text-lg uppercase">Lin Qiao</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.22em] font-mono" aria-label="Primary navigation">
+        <a class="nav-link" href="#home">Home</a>
+        <a class="nav-link" href="#work">Work</a>
+        <a class="nav-link" href="#field-notes">Field Notes</a>
+        <a class="nav-link" href="#about">About</a>
+        <a class="nav-link" href="#consulting">Consulting</a>
+        <a class="nav-link" href="#contact">Contact</a>
+      </nav>
+
+      <button id="menuBtn" class="md:hidden inline-flex items-center justify-center w-10 h-10 border border-[#F7F0DF]/20" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open navigation">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav id="mobileMenu" class="hidden md:hidden absolute top-16 inset-x-0 bg-[#263323] border-t border-[#F7F0DF]/10 p-6 grid gap-4 text-xs uppercase tracking-[0.22em] font-mono" aria-label="Mobile navigation">
+      <a class="nav-link" href="#home">Home</a>
+      <a class="nav-link" href="#work">Work</a>
+      <a class="nav-link" href="#field-notes">Field Notes</a>
+      <a class="nav-link" href="#about">About</a>
+      <a class="nav-link" href="#consulting">Consulting</a>
+      <a class="nav-link" href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main class="max-w-[1440px] mx-auto overflow-hidden">
+    <section id="home" class="paper-grain min-h-[720px] md:min-h-[760px] relative overflow-hidden bg-[#EEE7D6] scroll-mt-16">
+      <svg class="hidden md:block absolute right-10 top-24 w-80 h-80 text-[#566347] opacity-20" viewBox="0 0 320 320" fill="none" aria-hidden="true">
+        <path d="M164 286C160 205 134 142 78 86" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M162 168C222 168 267 132 281 58C220 52 174 87 162 168Z" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M132 124C81 121 45 90 34 31C86 29 125 57 132 124Z" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+
+      <div class="grid grid-cols-12 gap-6 px-4 md:px-8 py-14 md:py-24 relative">
+        <div class="col-span-12 md:col-span-4 flex flex-col justify-center reveal" style="transition-delay:80ms;">
+          <p class="font-mono text-[10px] uppercase tracking-[0.28em] text-[#9B7A55] mb-5">Field record / Yunnan — Lisbon</p>
+          <h1 class="font-serif text-[76px] sm:text-[92px] md:text-[128px] lg:text-[156px] leading-[0.78] text-[#566347] tracking-tight">
+            Lin<br>Qiao
+          </h1>
+          <p class="mt-7 font-serif text-2xl md:text-3xl text-[#263323] lowercase">field botanist & seed-bank curator</p>
+          <p class="mt-6 max-w-sm text-sm leading-7 text-[#2E3026]/80">
+            I collect stories that can outlive the fire.
+          </p>
+
+          <div class="mt-10 grid grid-cols-2 gap-3 max-w-md font-mono text-[10px] uppercase tracking-wider">
+            <div class="bg-[#F7F0DF]/70 border border-[#C8BFA8] p-3">
+              <span class="block text-[#9B7A55]">Base</span>
+              Kunming / Lisbon
+            </div>
+            <div class="bg-[#F7F0DF]/70 border border-[#C8BFA8] p-3">
+              <span class="block text-[#9B7A55]">Practice</span>
+              Seed systems
+            </div>
+          </div>
+        </div>
+
+        <div class="col-span-12 md:col-span-5 flex items-center justify-center reveal" style="--r:-3deg; transition-delay:220ms;">
+          <figure class="group relative bg-[#F7F0DF] p-3 border border-[#C8BFA8] shadow-[0_18px_42px_rgba(46,48,38,0.18)] rotate-[-3deg] hover:rotate-0 hover:scale-[1.015] transition-transform duration-700 ease-out max-w-[620px]">
+            <span class="absolute -top-4 left-1/3 w-36 h-10 bg-[#D4BE8D]/75 rotate-[-4deg] shadow-sm"></span>
+            <img
+              src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"
+              onerror="this.src='https://placehold.co/900x680/EEE7D6/263323/png?text=Lin+Qiao'"
+              alt="Misty mountain landscape with plants"
+              class="w-full aspect-[4/3] object-cover border border-[#C8BFA8] saturate-[0.82] contrast-[0.96] transition duration-700 group-hover:saturate-100"
+            >
+            <figcaption class="mt-3 flex justify-between font-mono text-[10px] uppercase tracking-wider text-[#566347]">
+              <span>Cloud forest margin</span>
+              <span>Archive no. LQ-042</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <aside class="col-span-12 md:col-span-3 flex md:items-center reveal" style="transition-delay:360ms;">
+          <div class="relative w-full">
+            <div class="bg-[#F7F0DF] border border-[#C8BFA8] p-5 shadow-[0_8px_24px_rgba(46,48,38,0.12)] md:rotate-[2deg]">
+              <p class="font-mono text-[10px] uppercase tracking-[0.22em] text-[#9B7A55] mb-4">Pressed specimen</p>
+              <svg class="w-full h-72 text-[#566347]" viewBox="0 0 210 300" fill="none" aria-hidden="true">
+                <path d="M104 286C101 206 97 122 91 20" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M97 85C63 74 42 46 34 11C72 14 95 41 97 85Z" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M100 130C60 129 31 105 18 67C61 64 94 87 100 130Z" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M105 176C145 170 172 143 183 101C137 103 111 132 105 176Z" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M106 222C69 219 42 196 30 158C72 157 101 180 106 222Z" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M108 106C144 101 167 78 177 42C137 42 113 66 108 106Z" stroke="currentColor" stroke-width="1.2"/>
+              </svg>
+              <div class="mt-3 border-t border-[#C8BFA8] pt-3 font-mono text-[10px] uppercase tracking-wider leading-5">
+                <p><span class="text-[#9B7A55]">Collector:</span> Lin Qiao</p>
+                <p><span class="text-[#9B7A55]">Region:</span> Yunnan, China</p>
+                <p><span class="text-[#9B7A55]">Focus:</span> alpine flora</p>
+              </div>
+            </div>
+            <div class="stamp-in absolute -right-2 -top-8 w-28 h-28 rounded-full border-2 border-[#9B7A55]/70 text-[#9B7A55] grid place-items-center text-center font-mono text-[10px] uppercase tracking-wider leading-4 rotate-[-12deg] bg-[#EEE7D6]/50">
+              Verified<br>Field<br>Notes
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="about" class="scroll-mt-16 grid grid-cols-12 border-y border-[#C8BFA8] bg-[#F7F0DF]/60">
+      <aside class="col-span-12 md:col-span-2 p-6 border-b md:border-b-0 md:border-r border-[#C8BFA8] reveal">
+        <p class="font-mono text-[10px] uppercase tracking-[0.24em] text-[#9B7A55] mb-6">Taxonomic card</p>
+        <dl class="font-mono text-[10px] uppercase tracking-wider leading-6">
+          <dt class="text-[#566347]">Name</dt>
+          <dd class="mb-3">Lin Qiao</dd>
+          <dt class="text-[#566347]">Discipline</dt>
+          <dd class="mb-3">Botany / Seed banking</dd>
+          <dt class="text-[#566347]">Years</dt>
+          <dd class="mb-3">12 years</dd>
+          <dt class="text-[#566347]">Field sites</dt>
+          <dd>Yunnan highlands, cloud forest edges, civic gardens</dd>
+        </dl>
+      </aside>
+
+      <div class="col-span-12 md:col-span-4 p-6 md:p-8 reveal" style="transition-delay:120ms;">
+        <p class="font-hand text-2xl text-[#9B7A55] mb-1">archive note</p>
+        <h2 class="font-serif text-4xl md:text-5xl leading-tight text-[#2E3026] mb-6">About</h2>
+        <div class="space-y-5 text-sm md:text-base leading-7 max-w-prose">
+          <p>
+            For the past 12 years I've worked where climate, terrain, and time collide—documenting alpine plants and the communities that depend on them.
+          </p>
+          <p>
+            After a devastating wildfire season, I co-founded a community seed library to protect local biodiversity and restore what burns.
+          </p>
+          <p>
+            Today I advise cities and gardens on building climate-resilient plant communities and seed systems that last.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-span-12 md:col-span-4 p-6 md:p-8 reveal" style="transition-delay:220ms;">
+        <figure class="group relative bg-[#F7F0DF] p-3 border border-[#C8BFA8] shadow-[0_8px_24px_rgba(46,48,38,0.12)] md:rotate-[-1deg] hover:rotate-0 transition duration-500">
+          <span class="absolute -top-3 right-10 w-28 h-8 bg-[#D4BE8D]/70 rotate-[5deg]"></span>
+          <img
+            src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=700&q=80"
+            onerror="this.src='https://placehold.co/700x900/EEE7D6/263323/png?text=Lin+Qiao'"
+            alt="Black and white portrait representing Lin Qiao at work"
+            class="w-full aspect-[3/4] object-cover grayscale group-hover:grayscale-0 transition duration-700 border border-[#C8BFA8]"
+          >
+          <figcaption class="mt-3 font-mono text-[10px] uppercase tracking-wider text-[#566347]">Field portrait / working archive</figcaption>
+        </figure>
+      </div>
+
+      <aside class="col-span-12 md:col-span-2 p-6 md:p-8 reveal" style="transition-delay:320ms;">
+        <div class="bg-[#EEE7D6] border border-[#C8BFA8] p-5 shadow-[0_8px_24px_rgba(46,48,38,0.12)] hover:-translate-y-1 transition duration-500">
+          <h3 class="font-serif text-2xl text-[#263323] mb-1">Practice Areas</h3>
+          <p class="font-mono text-[10px] uppercase tracking-wider text-[#9B7A55] mb-5">experience weight</p>
+
+          <div class="space-y-5">
+            <div>
+              <div class="flex justify-between gap-3 font-mono text-[10px] uppercase tracking-wider mb-2">
+                <span>Seed Conservation & Curation</span><span>92%</span>
+              </div>
+              <div class="h-1.5 bg-[#C8BFA8]/50"><div class="skill-bar h-full bg-[#566347]" data-width="92"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between gap-3 font-mono text-[10px] uppercase tracking-wider mb-2">
+                <span>Ecological Restoration</span><span>88%</span>
+              </div>
+              <div class="h-1.5 bg-[#C8BFA8]/50"><div class="skill-bar h-full bg-[#566347]" data-width="88"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between gap-3 font-mono text-[10px] uppercase tracking-wider mb-2">
+                <span>Alpine Plant Documentation</span><span>94%</span>
+              </div>
+              <div class="h-1.5 bg-[#C8BFA8]/50"><div class="skill-bar h-full bg-[#566347]" data-width="94"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between gap-3 font-mono text-[10px] uppercase tracking-wider mb-2">
+                <span>Public Garden Consulting</span><span>80%</span>
+              </div>
+              <div class="h-1.5 bg-[#C8BFA8]/50"><div class="skill-bar h-full bg-[#566347]" data-width="80"></div></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="work" class="scroll-mt-16 px-4 md:px-8 py-14 md:py-20 bg-[#EEE7D6]">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-end gap-3 md:gap-6 border-b border-[#C8BFA8] pb-4 reveal">
+          <div>
+            <p class="font-mono text-[10px] uppercase tracking-[0.24em] text-[#9B7A55] mb-2">selected projects</p>
+            <h2 class="font-serif text-4xl md:text-5xl leading-tight">Featured Works</h2>
+          </div>
+          <p class="max-w-prose text-sm leading-7 text-[#2E3026]/75">
+            Research-led projects across seed diversity, post-fire landscapes, and public herbarium culture.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-8">
+          <article class="group bg-[#F7F0DF] border border-[#C8BFA8] rounded-sm overflow-hidden shadow-[0_8px_24px_rgba(46,48,38,0.12)] hover:-translate-y-1 hover:shadow-xl transition-all duration-500 reveal" style="transition-delay:80ms;">
+            <div class="relative overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=900&q=80" onerror="this.src='https://placehold.co/900x640/EEE7D6/263323/png?text=Cloud+Forest+Seed+Atlas'" alt="Cloud forest for seed atlas project" class="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-105">
+              <div class="absolute inset-0 bg-[#263323]/70 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 grid place-items-center p-6">
+                <p class="translate-y-2 group-hover:translate-y-0 transition-transform duration-300 text-[#F7F0DF] font-mono text-[10px] uppercase tracking-[0.22em] text-center">Seed atlas / 2021–2024</p>
+              </div>
+            </div>
+            <div class="p-5">
+              <h3 class="font-serif text-2xl text-[#263323]">Cloud Forest Seed Atlas</h3>
+              <p class="mt-3 text-sm leading-7">A multi-year survey and atlas of cloud forest seed diversity across southwest China.</p>
+              <a href="#" class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#566347] group/link">
+                View project <span class="transition-transform group-hover/link:translate-x-1">→</span>
+              </a>
+            </div>
+          </article>
+
+          <article class="group bg-[#F7F0DF] border border-[#C8BFA8] rounded-sm overflow-hidden shadow-[0_8px_24px_rgba(46,48,38,0.12)] hover:-translate-y-1 hover:shadow-xl transition-all duration-500 reveal" style="transition-delay:180ms;">
+            <div class="relative overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1473773508845-188df298d2d1?auto=format&fit=crop&w=900&q=80" onerror="this.src='https://placehold.co/900x640/EEE7D6/263323/png?text=Firebreak+Meadow+Restoration'" alt="Mountain meadow restoration landscape" class="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-105">
+              <div class="absolute inset-0 bg-[#263323]/70 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 grid place-items-center p-6">
+                <p class="translate-y-2 group-hover:translate-y-0 transition-transform duration-300 text-[#F7F0DF] font-mono text-[10px] uppercase tracking-[0.22em] text-center">Restoration / 2020–2023</p>
+              </div>
+            </div>
+            <div class="p-5">
+              <h3 class="font-serif text-2xl text-[#263323]">Firebreak Meadow Restoration</h3>
+              <p class="mt-3 text-sm leading-7">Restoring post-wildfire landscapes with native meadows, soil care, and seed banking.</p>
+              <a href="#" class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#566347] group/link">
+                View project <span class="transition-transform group-hover/link:translate-x-1">→</span>
+              </a>
+            </div>
+          </article>
+
+          <article class="group bg-[#F7F0DF] border border-[#C8BFA8] rounded-sm overflow-hidden shadow-[0_8px_24px_rgba(46,48,38,0.12)] hover:-translate-y-1 hover:shadow-xl transition-all duration-500 reveal" style="transition-delay:280ms;">
+            <div class="relative overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=900&q=80" onerror="this.src='https://placehold.co/900x640/EEE7D6/263323/png?text=100+Tiny+Herbariums'" alt="Pressed flowers and herbarium-like arrangement" class="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-105">
+              <div class="absolute inset-0 bg-[#263323]/70 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 grid place-items-center p-6">
+                <p class="translate-y-2 group-hover:translate-y-0 transition-transform duration-300 text-[#F7F0DF] font-mono text-[10px] uppercase tracking-[0.22em] text-center">Public herbarium / 2022</p>
+              </div>
+            </div>
+            <div class="p-5">
+              <h3 class="font-serif text-2xl text-[#263323]">100 Tiny Herbariums</h3>
+              <p class="mt-3 text-sm leading-7">A participatory project inviting everyday people to preserve plants and observations.</p>
+              <a href="#" class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#566347] group/link">
+                View project <span class="transition-transform group-hover/link:translate-x-1">→</span>
+              </a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="field-notes" class="scroll-mt-16 grid grid-cols-12 bg-[#EEE7D6] border-y border-[#C8BFA8]">
+      <div class="col-span-12 md:col-span-3 bg-[#263323] text-[#F7F0DF] p-6 md:p-8 reveal">
+        <p class="font-mono text-[10px] uppercase tracking-[0.24em] text-[#D4BE8D] mb-4">PROCESS & OBSERVATION</p>
+        <h2 class="font-serif text-4xl md:text-5xl leading-tight mb-6">Field Notes</h2>
+        <p class="text-sm leading-7 text-[#F7F0DF]/82 max-w-prose">
+          Good work starts with attention. I document not just species, but context—soil, slope, season, and the small relationships that keep ecosystems in balance.
+        </p>
+        <a href="#" class="mt-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider link-line group">
+          Read more notes <span class="transition-transform group-hover:translate-x-1">→</span>
+        </a>
+      </div>
+
+      <div class="col-span-12 md:col-span-6 p-6 md:p-8 reveal" style="--r:1deg; transition-delay:160ms;">
+        <article class="paper-grain bg-[#F7F0DF] shadow-xl border border-[#C8BFA8] p-5 md:p-8 md:rotate-[1deg] origin-bottom transition-transform duration-700">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <p class="font-hand text-3xl text-[#9B7A55]">field notebook</p>
+              <h3 class="font-serif text-3xl text-[#263323] mt-2">Gentiana straminea</h3>
+              <div class="mt-5 font-mono text-[11px] leading-7 uppercase tracking-wider">
+                <p><span class="text-[#9B7A55]">Date:</span> 7/8 Overcast</p>
+                <p><span class="text-[#9B7A55]">Observation:</span> flowers closed until 13:50</p>
+                <p><span class="text-[#9B7A55]">Pollinator:</span> bumblebee visitation 15:00</p>
+                <p><span class="text-[#9B7A55]">Soil:</span> soil moist below 5 cm</p>
+              </div>
+            </div>
+            <div class="relative min-h-64 border-l border-[#C8BFA8] pl-5">
+              <svg class="absolute right-2 top-0 w-44 h-64 text-[#566347]/70" viewBox="0 0 180 260" fill="none" aria-hidden="true">
+                <path d="M88 242C84 180 84 103 91 28" stroke="currentColor" stroke-width="1.1"/>
+                <path d="M92 62C117 48 130 31 135 10C111 12 94 31 92 62Z" stroke="currentColor" stroke-width="1.1"/>
+                <path d="M87 107C56 98 40 78 35 50C66 54 85 75 87 107Z" stroke="currentColor" stroke-width="1.1"/>
+                <path d="M91 152C120 143 138 121 144 91C111 96 93 119 91 152Z" stroke="currentColor" stroke-width="1.1"/>
+              </svg>
+              <div class="relative z-10 grid grid-cols-2 gap-2 font-mono text-[10px] uppercase tracking-wider">
+                <div class="border border-[#C8BFA8] p-3 bg-[#EEE7D6]/60">Slope<br><span class="text-[#9B7A55]">NE 18°</span></div>
+                <div class="border border-[#C8BFA8] p-3 bg-[#EEE7D6]/60">Elev.<br><span class="text-[#9B7A55]">3,420 m</span></div>
+                <div class="col-span-2 border border-[#C8BFA8] p-3 bg-[#EEE7D6]/60">Small relationships keep ecosystems in balance.</div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-span-12 md:col-span-3 p-6 md:p-8 reveal" style="transition-delay:260ms;">
+        <figure class="group relative bg-[#F7F0DF] p-3 border border-[#C8BFA8] shadow-[0_8px_24px_rgba(46,48,38,0.12)] overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=700&q=80" onerror="this.src='https://placehold.co/700x900/EEE7D6/263323/png?text=Field+Notes'" alt="Mountain field site for botanical collection" class="w-full aspect-[3/4] object-cover transition-transform duration-700 group-hover:scale-105">
+          <div class="absolute inset-3 bg-[#263323]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 grid place-items-center p-6">
+            <p class="text-[#F7F0DF] font-hand text-3xl leading-8 text-center">Collect responsibly. Share openly. Restore together.</p>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <section id="seed-library" class="scroll-mt-16 grid grid-cols-12 bg-[#F7F0DF] border-b border-[#C8BFA8]">
+      <div class="col-span-12 md:col-span-4 p-6 md:p-8 reveal">
+        <p class="font-mono text-[10px] uppercase tracking-[0.24em] text-[#9B7A55] mb-4">community infrastructure</p>
+        <h2 class="font-serif text-4xl md:text-5xl leading-tight text-[#263323] mb-5">Kunming Community Seed Library</h2>
+        <p class="max-w-prose text-sm md:text-base leading-7">
+          A community-driven collection of native seeds from Yunnan and beyond. Open for exchange, learning, and restoration.
+        </p>
+        <a href="#" class="mt-7 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#566347] link-line group">
+          Visit the library <span class="transition-transform group-hover:translate-x-1">→</span>
+        </a>
+      </div>
+
+      <div class="col-span-12 md:col-span-4 overflow-hidden reveal" style="transition-delay:120ms;">
+        <div class="group h-full min-h-[340px] bg-[#EEE7D6]">
+          <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80" onerror="this.src='https://placehold.co/800x600/EEE7D6/263323/png?text=Seed+Library'" alt="Seed library and plant collection" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] saturate-[.85] group-hover:saturate-100">
+        </div>
+      </div>
+
+      <aside class="col-span-12 md:col-span-3 p-6 md:p-8 reveal" style="transition-delay:220ms;">
+        <div class="h-full border-l border-[#C8BFA8] pl-6 font-mono text-[10px] leading-6 uppercase tracking-wider hover:bg-[#EEE7D6] transition-colors duration-500 p-5">
+          <p class="text-[#9B7A55] tracking-[0.24em] mb-5">SEED ACCESSION</p>
+          <p><span class="text-[#566347]">SPECIES:</span> Primula secundiflora</p>
+          <p><span class="text-[#566347]">COLLECTED:</span> 02.05.2022</p>
+          <p><span class="text-[#566347]">LOCATION:</span> Lijiang, Yunnan</p>
+          <p><span class="text-[#566347]">HABITAT:</span> streamside meadow</p>
+          <p><span class="text-[#566347]">ELEV.:</span> 3,200 m</p>
+          <p><span class="text-[#566347]">STATUS:</span> gift from field partner</p>
+        </div>
+      </aside>
+
+      <div class="col-span-12 md:col-span-1 flex items-center justify-end md:justify-center p-6 reveal" style="transition-delay:320ms;">
+        <div class="w-28 h-28 md:w-24 md:h-24 rounded-full border-2 border-[#9B7A55] text-[#9B7A55] grid place-items-center text-center font-mono text-[9px] uppercase tracking-wider leading-4 rotate-[-10deg]">
+          SAVED TODAY<br>/<br>FUTURE BLOOMS
+        </div>
+      </div>
+    </section>
+
+    <section id="consulting" class="scroll-mt-16 grid grid-cols-12 bg-[#263323] text-[#F7F0DF] relative overflow-hidden">
+      <svg class="absolute right-8 bottom-4 w-72 h-72 text-[#F7F0DF] opacity-10" viewBox="0 0 260 260" fill="none" aria-hidden="true">
+        <path d="M132 240C126 165 117 91 104 20" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M111 76C72 73 43 50 30 15C70 14 101 36 111 76Z" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M119 128C166 121 197 90 209 42C158 45 128 78 119 128Z" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+
+      <div class="col-span-12 md:col-span-4 p-6 md:p-8 reveal">
+        <p class="font-mono text-[10px] uppercase tracking-[0.24em] text-[#D4BE8D] mb-4">consulting</p>
+        <h2 class="font-serif text-4xl md:text-5xl leading-tight mb-5">Let's grow resilient places.</h2>
+        <p class="max-w-prose text-sm md:text-base leading-7 text-[#F7F0DF]/82">
+          I work with communities, institutions, and cities to design planting and seed systems that can thrive in a changing climate.
+        </p>
+        <a href="mailto:lin.qiao.botany@gmail.com" class="mt-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider group">
+          Work with me <span class="transition-transform group-hover:translate-x-1">→</span>
+        </a>
+      </div>
+
+      <div class="col-span-12 md:col-span-4 p-6 md:p-8 reveal" style="transition-delay:140ms;">
+        <blockquote class="bg-[#F7F0DF] text-[#566347] rotate-[-2deg] shadow-lg border border-[#C8BFA8] p-8 hover:rotate-0 hover:-translate-y-1 transition duration-500">
+          <p class="font-hand text-4xl md:text-5xl leading-tight">
+            Plants don't need us to save them. They need us to listen.
+          </p>
+          <footer class="mt-6 font-mono text-[10px] uppercase tracking-wider text-[#9B7A55]">— Lin Qiao</footer>
+        </blockquote>
+      </div>
+
+      <div class="col-span-12 md:col-span-4 p-6 md:p-8 bg-[#EEE7D6] text-[#2E3026] reveal" style="transition-delay:240ms;">
+        <p class="font-mono text-[10px] uppercase tracking-[0.24em] text-[#9B7A55] mb-4">quick contact</p>
+        <h3 class="font-serif text-3xl text-[#263323] mb-5">Available for restoration strategy, seed curation, and public garden programs.</h3>
+        <div class="space-y-3 text-sm">
+          <p class="flex gap-3">
+            <svg class="w-4 h-4 mt-0.5 text-[#566347]" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="1.5"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.5"/></svg>
+            lin.qiao.botany@gmail.com
+          </p>
+          <p class="flex gap-3">
+            <svg class="w-4 h-4 mt-0.5 text-[#566347]" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-5.4 7-12A7 7 0 1 0 5 9c0 6.6 7 12 7 12Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            Kunming, China / Lisbon, Portugal
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact" class="scroll-mt-16 bg-[#263323] text-[#F7F0DF] border-t border-[#F7F0DF]/10">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 px-4 md:px-8 py-8">
+      <div class="md:col-span-5">
+        <p class="font-serif text-3xl mb-5">Lin Qiao</p>
+        <div class="grid gap-3 text-sm text-[#F7F0DF]/82">
+          <a href="mailto:lin.qiao.botany@gmail.com" class="inline-flex items-center gap-3 hover:opacity-100 hover:-translate-y-px transition opacity-85">
+            <svg class="w-4 h-4 stroke-current opacity-80" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="1.5"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.5"/></svg>
+            lin.qiao.botany@gmail.com
+          </a>
+          <p class="inline-flex items-center gap-3">
+            <svg class="w-4 h-4 stroke-current opacity-80" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-5.4 7-12A7 7 0 1 0 5 9c0 6.6 7 12 7 12Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            Kunming, China / Lisbon, Portugal
+          </p>
+          <a href="#" class="inline-flex items-center gap-3 hover:opacity-100 hover:-translate-y-px transition opacity-85">
+            <svg class="w-4 h-4 stroke-current opacity-80" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="7" r="1" fill="currentColor"/></svg>
+            @linqiao.botany
+          </a>
+        </div>
+      </div>
+
+      <div class="md:col-span-5">
+        <h2 class="font-serif text-3xl mb-2">Field notes in your inbox</h2>
+        <p class="text-sm leading-7 text-[#F7F0DF]/75 mb-4">Reflections, updates, and seeds for thought.</p>
+        <form id="newsletterForm" class="flex flex-col sm:flex-row gap-3" novalidate>
+          <label for="email" class="sr-only">Your email</label>
+          <input id="email" name="email" type="email" placeholder="Your email" class="w-full bg-[#F7F0DF] text-[#2E3026] border border-[#C8BFA8] px-3 py-2 outline-none focus:ring-2 focus:ring-[#D4BE8D]" required>
+          <button type="submit" class="bg-[#566347] hover:bg-[#F7F0DF] hover:text-[#263323] active:scale-[0.98] transition px-5 py-2 font-mono text-xs uppercase tracking-wider">
+            Subscribe
+          </button>
+        </form>
+        <p id="formStatus" class="mt-3 min-h-5 font-mono text-[10px] uppercase tracking-wider text-[#D4BE8D]" aria-live="polite"></p>
+      </div>
+
+      <div class="md:col-span-2 md:text-right text-xs leading-6 text-[#F7F0DF]/70">
+        <p>© 2024 Lin Qiao</p>
+        <p>Site by hand, with care.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    menuBtn.addEventListener('click', () => {
+      const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+      menuBtn.setAttribute('aria-expanded', String(!expanded));
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        menuBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    const skillObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.skill-bar').forEach(bar => {
+            bar.style.width = bar.dataset.width + '%';
+          });
+          skillObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.35 });
+
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) skillObserver.observe(aboutSection);
+
+    const navLinks = Array.from(document.querySelectorAll('header nav a[href^="#"]'));
+    const sectionMap = new Map(navLinks.map(link => [link.getAttribute('href').slice(1), link]));
+
+    const spyObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => link.classList.remove('active'));
+          const active = sectionMap.get(entry.target.id);
+          if (active) {
+            document.querySelectorAll(`header nav a[href="#${entry.target.id}"]`).forEach(link => link.classList.add('active'));
+          }
+        }
+      });
+    }, {
+      rootMargin: '-35% 0px -55% 0px',
+      threshold: 0.01
+    });
+
+    document.querySelectorAll('section[id], footer[id]').forEach(section => spyObserver.observe(section));
+
+    const form = document.getElementById('newsletterForm');
+    const status = document.getElementById('formStatus');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const email = form.email.value.trim();
+      if (!email || !email.includes('@')) {
+        status.textContent = 'Please enter a valid email.';
+        return;
+      }
+      status.textContent = 'Thank you for subscribing.';
+      form.reset();
+    });
+  </script>
+</body>
+</html>
